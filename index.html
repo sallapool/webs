@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة موردك - بوابتك الآمنة للاستيراد من الصين</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-container">
+            <div class="loading-logo">
+                <div class="logo-icon">
+                    <i class="fas fa-shipping-fast"></i>
+                    <div class="logo-circle"></div>
+                </div>
+                <h2 data-ar="موردك" data-en="Moredak">موردك</h2>
+            </div>
+            <div class="loading-spinner"></div>
+            <p data-ar="جاري التحميل..." data-en="Loading...">جاري التحميل...</p>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <div class="login-container">
+                <div class="login-header">
+                    <div class="login-icon">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <h2 id="modal-title" data-ar="تسجيل الدخول" data-en="Login">تسجيل الدخول</h2>
+                </div>
+                
+                <!-- Login Form -->
+                <form id="login-form" class="auth-form active">
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="login-email" required>
+                        <label data-ar="البريد الإلكتروني" data-en="Email">البريد الإلكتروني</label>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="login-password" required>
+                        <label data-ar="كلمة المرور" data-en="Password">كلمة المرور</label>
+                        <span class="toggle-password"><i class="fas fa-eye"></i></span>
+                    </div>
+                    <div class="remember-forgot">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="remember">
+                            <span class="checkmark"></span>
+                            <span data-ar="تذكرني" data-en="Remember me">تذكرني</span>
+                        </label>
+                        <a href="#" data-ar="نسيت كلمة المرور؟" data-en="Forgot Password?">نسيت كلمة المرور؟</a>
+                    </div>
+                    <button type="submit" class="auth-btn">
+                        <span data-ar="دخول" data-en="Login">دخول</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+
+                <!-- Register Form -->
+                <form id="register-form" class="auth-form">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="register-name" required>
+                        <label data-ar="الاسم الكامل" data-en="Full Name">الاسم الكامل</label>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="register-email" required>
+                        <label data-ar="البريد الإلكتروني" data-en="Email">البريد الإلكتروني</label>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-phone"></i>
+                        <input type="tel" id="register-phone" required>
+                        <label data-ar="رقم الهاتف" data-en="Phone Number">رقم الهاتف</label>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="register-password" required>
+                        <label data-ar="كلمة المرور" data-en="Password">كلمة المرور</label>
+                        <span class="toggle-password"><i class="fas fa-eye"></i></span>
+                    </div>
+                    <button type="submit" class="auth-btn">
+                        <span data-ar="إنشاء حساب" data-en="Create Account">إنشاء حساب</span>
+                        <i class="fas fa-user-plus"></i>
+                    </button>
+                </form>
+
+                <div class="auth-switch">
+                    <span id="switch-text" data-ar="ليس لديك حساب؟" data-en="Don't have an account?">ليس لديك حساب؟</span>
+                    <a href="#" id="switch-link" data-ar="إنشاء حساب جديد" data-en="Create New Account">إنشاء حساب جديد</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Consultation Modal -->
+    <div id="consultation-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <div class="consultation-container">
+                <div class="consultation-header">
+                    <div class="consultation-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h2 data-ar="استشارة مجانية" data-en="Free Consultation">استشارة مجانية</h2>
+                    <p data-ar="احصل على استشارة مجانية من خبرائنا" data-en="Get free consultation from our experts">احصل على استشارة مجانية من خبرائنا</p>
+                </div>
+                
+                <form id="consultation-form">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="consultation-name" required>
+                        <label data-ar="الاسم الكامل" data-en="Full Name">الاسم الكامل</label>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="consultation-email" required>
+                        <label data-ar="البريد الإلكتروني" data-en="Email">البريد الإلكتروني</label>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-phone"></i>
+                        <input type="tel" id="consultation-phone" required>
+                        <label data-ar="رقم الهاتف" data-en="Phone Number">رقم الهاتف</label>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-cogs"></i>
+                        <select id="consultation-service" required>
+                            <option value="" data-ar="اختر الخدمة المطلوبة" data-en="Select Required Service">اختر الخدمة المطلوبة</option>
+                            <option value="import" data-ar="الاستيراد" data-en="Import">الاستيراد</option>
+                            <option value="inspection" data-ar="الفحص" data-en="Inspection">الفحص</option>
+                            <option value="representation" data-ar="التمثيل" data-en="Representation">التمثيل</option>
+                            <option value="compliance" data-ar="الامتثال" data-en="Compliance">الامتثال</option>
+                            <option value="documentation" data-ar="التوثيق" data-en="Documentation">التوثيق</option>
+                            <option value="shipping" data-ar="الشحن" data-en="Shipping">الشحن</option>
+                            <option value="pricing" data-ar="خطة تسعيرية" data-en="Pricing Plan">خطة تسعيرية</option>
+                            <option value="marketing" data-ar="خطة تسويقية" data-en="Marketing Plan">خطة تسويقية</option>
+                            <option value="feasibility" data-ar="دراسة جدوى" data-en="Feasibility Study">دراسة جدوى</option>
+                        </select>
+                        <label data-ar="نوع الخدمة" data-en="Service Type">نوع الخدمة</label>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-comment-alt"></i>
+                        <textarea id="consultation-message" rows="4" required></textarea>
+                        <label data-ar="تفاصيل الاستشارة" data-en="Consultation Details">تفاصيل الاستشارة</label>
+                    </div>
+                    <button type="submit" class="consultation-btn">
+                        <span data-ar="إرسال طلب الاستشارة" data-en="Send Consultation Request">إرسال طلب الاستشارة</span>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-shipping-fast"></i>
+                        <div class="logo-circle"></div>
+                    </div>
+                    <div class="logo-text">
+                        <h1 data-ar="موردك" data-en="Moredak">موردك</h1>
+                    </div>
+                </div>
+                
+                <div class="nav-menu" id="nav-menu">
+                    <a href="#home" class="nav-link active" data-ar="الرئيسية" data-en="Home">الرئيسية</a>
+                    <a href="#about" class="nav-link" data-ar="من نحن" data-en="About">من نحن</a>
+                    <a href="#features" class="nav-link" data-ar="مميزاتنا" data-en="Features">مميزاتنا</a>
+                    <a href="#services" class="nav-link" data-ar="خدماتنا" data-en="Services">خدماتنا</a>
+                    <a href="#process" class="nav-link" data-ar="آلية العمل" data-en="Process">آلية العمل</a>
+                    <a href="#contact" class="nav-link" data-ar="تواصل معنا" data-en="Contact">تواصل معنا</a>
+                    <button class="login-btn-nav mobile-only" id="mobile-login-btn">
+                        <i class="fas fa-user"></i>
+                        <span data-ar="دخول" data-en="Login">دخول</span>
+                    </button>
+                </div>
+
+                <div class="nav-actions">
+                    <div class="language-selector">
+                        <button class="lang-toggle" id="lang-toggle">
+                            <i class="fas fa-globe"></i>
+                            <span id="lang-text">EN</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="lang-dropdown" id="lang-dropdown">
+                            <div class="lang-option" data-lang="ar">
+                                <img src="https://flagcdn.com/w20/sa.png" alt="Arabic">
+                                <span>العربية</span>
+                            </div>
+                            <div class="lang-option" data-lang="en">
+                                <img src="https://flagcdn.com/w20/us.png" alt="English">
+                                <span>English</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="login-btn-nav desktop-only" id="login-btn">
+                        <i class="fas fa-user"></i>
+                        <span data-ar="دخول" data-en="Login">دخول</span>
+                    </button>
+                    
+                    <div class="hamburger" id="hamburger">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-background">
+            <img src="https://images.pexels.com/photos/906494/pexels-photo-906494.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop" alt="Shipping containers">
+            <div class="floating-icons">
+                <div class="floating-icon" style="--delay: 0s; --x: 10%; --y: 20%;">
+                    <i class="fas fa-ship"></i>
+                </div>
+                <div class="floating-icon" style="--delay: 1s; --x: 80%; --y: 30%;">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="floating-icon" style="--delay: 2s; --x: 20%; --y: 70%;">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <div class="floating-icon" style="--delay: 3s; --x: 70%; --y: 80%;">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <div class="floating-icon" style="--delay: 4s; --x: 90%; --y: 60%;">
+                    <i class="fas fa-handshake"></i>
+                </div>
+            </div>
+        </div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    <span data-ar="منصة موردك" data-en="Moredak Platform">منصة موردك</span>
+                    <span class="highlight" data-ar="بوابتك الآمنة للاستيراد من الصين" data-en="Your Secure Gateway to Import from China">بوابتك الآمنة للاستيراد من الصين</span>
+                </h1>
+                <div class="hero-vision">
+                    <h2 data-ar="رؤيتنا" data-en="Our Vision">رؤيتنا</h2>
+                    <p data-ar="أن نكون الشريك الموثوق والسباق في تسهيل عمليات الاستيراد والتجارة الدولية، ممكّنين الأفراد والشركات من الوصول إلى أفضل المنتجات والفرص من الصين بكل سهولة وثقة." data-en="To be the trusted and pioneering partner in facilitating import operations and international trade, enabling individuals and companies to access the best products and opportunities from China with ease and confidence.">
+                        أن نكون الشريك الموثوق والسباق في تسهيل عمليات الاستيراد والتجارة الدولية، ممكّنين الأفراد والشركات من الوصول إلى أفضل المنتجات والفرص من الصين بكل سهولة وثقة.
+                    </p>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <i class="fas fa-users"></i>
+                        <div class="stat-content">
+                            <span class="stat-number">500+</span>
+                            <span class="stat-label" data-ar="عميل راضٍ" data-en="Happy Clients">عميل راضٍ</span>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-shield-alt"></i>
+                        <div class="stat-content">
+                            <span class="stat-number">99.9%</span>
+                            <span class="stat-label" data-ar="معدل النجاح" data-en="Success Rate">معدل النجاح</span>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-star"></i>
+                        <div class="stat-content">
+                            <span class="stat-number">4.9</span>
+                            <span class="stat-label" data-ar="تقييم العملاء" data-en="Client Rating">تقييم العملاء</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-buttons">
+                    <button class="cta-btn primary" onclick="scrollToSection('services')">
+                        <span data-ar="استكشف خدماتنا" data-en="Explore Our Services">استكشف خدماتنا</span>
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <button class="cta-btn secondary" id="consultation-btn">
+                        <span data-ar="استشارة مجانية" data-en="Free Consultation">استشارة مجانية</span>
+                        <i class="fas fa-comments"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="scroll-mouse"></div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-ar="من نحن" data-en="About Us">من نحن</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="about-content">
+                <div class="about-text">
+                    <p data-ar="موردك هي منصة رائدة ومتكاملة متخصصة في تبسيط وتأمين عملية الاستيراد من الصين. نلتزم بتقديم حلول لوجستية وتجارية شاملة، تبدأ من الفكرة الأولية للمنتج وتصل بك إلى باب منزلك أو مستودعك. من خلال فريقنا المتخصص وشبكة علاقاتنا الواسعة، نضمن لك تجربة استيراد سلسة، آمنة، وذات جودة عالية، مع التزامنا بأعلى معايير الشفافية والموثوقية في كل خطوة" data-en="Moredak is a leading and integrated platform specialized in simplifying and securing the import process from China. We are committed to providing comprehensive logistical and commercial solutions, starting from the initial product idea and reaching your doorstep or warehouse. Through our specialized team and extensive network of relationships, we guarantee you a smooth, safe, and high-quality import experience, with our commitment to the highest standards of transparency and reliability at every step.">
+                        موردك هي منصة رائدة ومتكاملة متخصصة في تبسيط وتأمين عملية الاستيراد من الصين. نلتزم بتقديم حلول لوجستية وتجارية شاملة، تبدأ من الفكرة الأولية للمنتج وتصل بك إلى باب منزلك أو مستودعك. من خلال فريقنا المتخصص وشبكة علاقاتنا الواسعة، نضمن لك تجربة استيراد سلسة، آمنة، وذات جودة عالية، مع التزامنا بأعلى معايير الشفافية والموثوقية في كل خطوة
+                    </p>
+                    <div class="about-features">
+                        <div class="feature">
+                            <i class="fas fa-users"></i>
+                            <div>
+                                <h4 data-ar="فريق متخصص" data-en="Expert Team">فريق متخصص</h4>
+                                <p data-ar="خبراء في التجارة الدولية" data-en="International trade experts">خبراء في التجارة الدولية</p>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-award"></i>
+                            <div>
+                                <h4 data-ar="جودة مضمونة" data-en="Guaranteed Quality">جودة مضمونة</h4>
+                                <p data-ar="فحص شامل لكل منتج" data-en="Comprehensive product inspection">فحص شامل لكل منتج</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <img src="https://images.pexels.com/photos/1267338/pexels-photo-1267338.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop" alt="Import operations">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Goals Section -->
+    <section id="goals" class="goals">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-ar="أهدافنا" data-en="Our Goals">أهدافنا</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="goals-content">
+                <div class="goals-image">
+                    <img src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop" alt="Business goals">
+                </div>
+                <div class="goals-list">
+                    <div class="goal-item">
+                        <div class="goal-icon">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <div class="goal-content">
+                            <h4 data-ar="تبسيط عملية الاستيراد" data-en="Simplify Import Process">تبسيط عملية الاستيراد</h4>
+                            <p data-ar="جعل الاستيراد من الصين متاحًا وسهلًا للجميع، بغض النظر عن حجم أعمالهم أو خبرتهم" data-en="Making importing from China accessible and easy for everyone, regardless of their business size or experience">جعل الاستيراد من الصين متاحًا وسهلًا للجميع، بغض النظر عن حجم أعمالهم أو خبرتهم</p>
+                        </div>
+                    </div>
+                    <div class="goal-item">
+                        <div class="goal-icon">
+                            <i class="fas fa-shield-check"></i>
+                        </div>
+                        <div class="goal-content">
+                            <h4 data-ar="ضمان الجودة والموثوقية" data-en="Ensure Quality and Reliability">ضمان الجودة والموثوقية</h4>
+                            <p data-ar="توفير منتجات عالية الجودة والتأكد من مطابقتها للمواصفات، مع تقليل المخاطر المرتبطة بالاستيراد" data-en="Providing high-quality products and ensuring their compliance with specifications, while reducing import-related risks">توفير منتجات عالية الجودة والتأكد من مطابقتها للمواصفات، مع تقليل المخاطر المرتبطة بالاستيراد</p>
+                        </div>
+                    </div>
+                    <div class="goal-item">
+                        <div class="goal-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <div class="goal-content">
+                            <h4 data-ar="تقديم حلول متكاملة" data-en="Provide Integrated Solutions">تقديم حلول متكاملة</h4>
+                            <p data-ar="تغطية جميع جوانب عملية الاستيراد، من البحث عن المنتج والتصنيع إلى الشحن والتخليص الجمركي والتسليم" data-en="Covering all aspects of the import process, from product research and manufacturing to shipping, customs clearance, and delivery">تغطية جميع جوانب عملية الاستيراد، من البحث عن المنتج والتصنيع إلى الشحن والتخليص الجمركي والتسليم</p>
+                        </div>
+                    </div>
+                    <div class="goal-item">
+                        <div class="goal-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <div class="goal-content">
+                            <h4 data-ar="دعم رواد الأعمال والشركات" data-en="Support Entrepreneurs and Companies">دعم رواد الأعمال والشركات</h4>
+                            <p data-ar="تمكين عملائنا من تحقيق أهدافهم التجارية والتوسع في أسواقهم من خلال توفير منتجات تنافسية بأسعار مجدية" data-en="Enabling our clients to achieve their business goals and expand in their markets by providing competitive products at viable prices">تمكين عملائنا من تحقيق أهدافهم التجارية والتوسع في أسواقهم من خلال توفير منتجات تنافسية بأسعار مجدية</p>
+                        </div>
+                    </div>
+                    <div class="goal-item">
+                        <div class="goal-icon">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <div class="goal-content">
+                            <h4 data-ar="بناء علاقات طويلة الأمد" data-en="Build Long-term Relationships">بناء علاقات طويلة الأمد</h4>
+                            <p data-ar="كسب ثقة عملائنا من خلال الشفافية، الاحترافية، وتقديم خدمة عملاء استثنائية" data-en="Earning our clients' trust through transparency, professionalism, and providing exceptional customer service">كسب ثقة عملائنا من خلال الشفافية، الاحترافية، وتقديم خدمة عملاء استثنائية</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-ar="مميزاتنا" data-en="Our Features">مميزاتنا</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3 data-ar="استشارة مجانية" data-en="Free Consultation">استشارة مجانية</h3>
+                    <p data-ar="نقدم لك استشارة مجانية لمساعدتك في اتخاذ أفضل القرارات الاستراتيجية لمشروعك الاستيرادي" data-en="We provide you with free consultation to help you make the best strategic decisions for your import project">
+                        نقدم لك استشارة مجانية لمساعدتك في اتخاذ أفضل القرارات الاستراتيجية لمشروعك الاستيرادي
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
+                    <h3 data-ar="شحن سريع وموثوق" data-en="Fast & Reliable Shipping">شحن سريع وموثوق</h3>
+                    <p data-ar="نتعاقد مع أفضل وأسرع شركات الشحن لضمان وصول منتجاتك بأقصى سرعة وأمان" data-en="We contract with the best and fastest shipping companies to ensure your products arrive with maximum speed and safety">
+                        نتعاقد مع أفضل وأسرع شركات الشحن لضمان وصول منتجاتك بأقصى سرعة وأمان
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3 data-ar="إدارة لوجستية متكاملة" data-en="Integrated Logistics">إدارة لوجستية متكاملة</h3>
+                    <p data-ar="نتولى كل تفاصيل الشحن والتخليص الجمركي بدقة، من المصنع حتى بابك" data-en="We handle all shipping and customs clearance details precisely, from factory to your door">
+                        نتولى كل تفاصيل الشحن والتخليص الجمركي بدقة، من المصنع حتى بابك
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-ar="خدماتنا" data-en="Our Services">خدماتنا</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="services-grid">
+                <div class="service-card" data-service="import">
+                    <div class="service-image">
+                        <img src="https://images.pexels.com/photos/1267338/pexels-photo-1267338.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&fit=crop" alt="Import Service">
+                    </div>
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <h3 data-ar="الاستيراد" data-en="Import">الاستيراد</h3>
+                        <p data-ar="نبسط عملية الاستيراد للأفراد والشركات لضمان حصولك على منتجاتك بسرعة وكفاءة، مع تأكيد التزامنا بتنفيذ كل خطوة بدقة" data-en="We simplify the import process for individuals and companies to ensure you get your products quickly and efficiently">
+                            نبسط عملية الاستيراد للأفراد والشركات لضمان حصولك على منتجاتك بسرعة وكفاءة، مع تأكيد التزامنا بتنفيذ كل خطوة بدقة
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="service-card" data-service="inspection">
+                    <div class="service-image">
+                        <img src="https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&fit=crop" alt="Inspection Service">
+                    </div>
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h3 data-ar="الفحص" data-en="Inspection">الفحص</h3>
+                        <p data-ar="نتعاقد مع مفتشين محليين لفحص منتجك بنسبة 100%، مرفقًا بصور وتقرير مفصل. نضمن الجودة، السلامة، ومطابقة المواصفات" data-en="We contract with local inspectors to inspect your product 100%, accompanied by photos and detailed report">
+                            نتعاقد مع مفتشين محليين لفحص منتجك بنسبة 100%، مرفقًا بصور وتقرير مفصل. نضمن الجودة، السلامة، ومطابقة المواصفات
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="service-card" data-service="representation">
+                    <div class="service-image">
+                        <img src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&fit=crop" alt="Representation Service">
+                    </div>
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <h3 data-ar="التمثيل" data-en="Representation">التمثيل</h3>
+                        <p data-ar="نعمل كوكلاء معتمدين مع المصانع الصينية لإتمام العقود التجارية نيابة عنك، مما يضمن الشفافية والموثوقية" data-en="We work as authorized agents with Chinese factories to complete commercial contracts on your behalf">
+                            نعمل كوكلاء معتمدين مع المصانع الصينية لإتمام العقود التجارية نيابة عنك، مما يضمن الشفافية والموثوقية
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="service-card" data-service="compliance">
+                    <div class="service-image">
+                        <img src="https://images.pexels.com/photos/5668473/pexels-photo-5668473.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&fit=crop" alt="Compliance Service">
+                    </div>
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 data-ar="الامتثال" data-en="Compliance">الامتثال</h3>
+                        <p data-ar="نضمن أن جميع الاتفاقيات التجارية والإجراءات تتوافق مع أعلى معايير الصناعة وأفضل الممارسات العالمية" data-en="We ensure that all commercial agreements and procedures comply with the highest industry standards">
+                            نضمن أن جميع الاتفاقيات التجارية والإجراءات تتوافق مع أعلى معايير الصناعة وأفضل الممارسات العالمية
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="service-card" data-service="documentation">
+                    <div class="service-image">
+                        <img src="https://images.pexels.com/photos/4386431/pexels-photo-4386431.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&fit=crop" alt="Documentation Service">
+                    </div>
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <h3 data-ar="التوثيق" data-en="Documentation">التوثيق</h3>
+                        <p data-ar="نقدم حلول توثيق كاملة تشمل وثائق الجودة والضمان لجميع مشترياتك، مما يوفر لك الطمأنينة في كل صفقة تجارية" data-en="We provide comprehensive documentation solutions including quality and warranty documents">
+                            نقدم حلول توثيق كاملة تشمل وثائق الجودة والضمان لجميع مشترياتك، مما يوفر لك الطمأنينة في كل صفقة تجارية
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="service-card" data-service="shipping">
+                    <div class="service-image">
+                        <img src="https://images.pexels.com/photos/906494/pexels-photo-906494.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&fit=crop" alt="Shipping Service">
+                    </div>
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <h3 data-ar="الشحن" data-en="Shipping">الشحن</h3>
+                        <p data-ar="ندير جميع خدمات الشحن اللوجستية، مع ضمان التخليص الجمركي السلس والتسليم في الوقت المحدد" data-en="We manage all logistics shipping services, with guaranteed smooth customs clearance">
+                            ندير جميع خدمات الشحن اللوجستية، مع ضمان التخليص الجمركي السلس والتسليم في الوقت المحدد
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="service-card" data-service="pricing">
+                    <div class="service-image">
+                        <img src="https://images.pexels.com/photos/3760067/pexels-photo-3760067.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&fit=crop" alt="Pricing Plan Service">
+                    </div>
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <h3 data-ar="خطة تسعيرية" data-en="Pricing Plan">خطة تسعيرية</h3>
+                        <p data-ar="نساعدك في إنشاء خطة تسعيرية متكاملة: تحليل التكاليف، استراتيجيات التسعير، حساب هامش الربح، ودراسة المنافسين" data-en="We help you create a comprehensive pricing plan: cost analysis, pricing strategies, profit margin calculation">
+                            نساعدك في إنشاء خطة تسعيرية متكاملة: تحليل التكاليف، استراتيجيات التسعير، حساب هامش الربح، ودراسة المنافسين
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="service-card" data-service="marketing">
+                    <div class="service-image">
+                        <img src="https://images.pexels.com/photos/265087/pexels-photo-265087.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&fit=crop" alt="Marketing Plan Service">
+                    </div>
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 data-ar="خطة تسويقية" data-en="Marketing Plan">خطة تسويقية</h3>
+                        <p data-ar="نساعدك على وضع خطة تسويقية فعالة لجذب العملاء وزيادة المبيعات في السوق المستهدف" data-en="We help you develop an effective marketing plan to attract customers and increase sales">
+                            نساعدك على وضع خطة تسويقية فعالة لجذب العملاء وزيادة المبيعات في السوق المستهدف
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="service-card" data-service="feasibility">
+                    <div class="service-image">
+                        <img src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=400&h=250&fit=crop" alt="Feasibility Study Service">
+                    </div>
+                    <div class="service-content">
+                        <div class="service-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h3 data-ar="دراسة جدوى" data-en="Feasibility Study">دراسة جدوى</h3>
+                        <p data-ar="تقييم جدوى المشروع التجاري أو الاستيرادي من النواحي المالية، السوقية، والفنية قبل البدء فيه لضمان اتخاذ قرار مستنير" data-en="Evaluating the feasibility of the commercial or import project from financial, market, and technical aspects">
+                            تقييم جدوى المشروع التجاري أو الاستيرادي من النواحي المالية، السوقية، والفنية قبل البدء فيه لضمان اتخاذ قرار مستنير
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section id="process" class="process">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-ar="دليل التنفيذ الاحترافي" data-en="Professional Implementation Guide">دليل التنفيذ الاحترافي</h2>
+                <div class="section-line"></div>
+                <p data-ar="اتبع الخطوات أدناه للتعرف على سير العمل، من الفكرة الأولى وحتى استلام المنتج النهائي، لتعيش تجربة احترافية تليق بتوقعاتك" data-en="Follow the steps below to understand the workflow, from the first idea to receiving the final product">
+                    اتبع الخطوات أدناه للتعرف على سير العمل، من الفكرة الأولى وحتى استلام المنتج النهائي، لتعيش تجربة احترافية تليق بتوقعاتك
+                </p>
+            </div>
+            <div class="process-timeline">
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <h3 data-ar="تواصل معنا" data-en="Contact Us">تواصل معنا</h3>
+                        <p data-ar="ابدأ رحلتك بالتواصل معنا لتحديد احتياجاتك ومناقشة تفاصيل مشروعك" data-en="Start your journey by contacting us to identify your needs and discuss your project details">
+                            ابدأ رحلتك بالتواصل معنا لتحديد احتياجاتك ومناقشة تفاصيل مشروعك
+                        </p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <i class="fas fa-file-invoice"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <h3 data-ar="احصل على العرض" data-en="Get Quote">احصل على العرض</h3>
+                        <p data-ar="سنقدم لك عرضًا متكاملًا يناسب ميزانيتك ويعكس رؤيتك" data-en="We will provide you with a comprehensive quote that suits your budget and reflects your vision">
+                            سنقدم لك عرضًا متكاملًا يناسب ميزانيتك ويعكس رؤيتك
+                        </p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <i class="fas fa-vial"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <h3 data-ar="اختبار العينات" data-en="Sample Testing">اختبار العينات</h3>
+                        <p data-ar="قيّم جودة المنتجات عبر عينات حقيقية تمنحك الثقة قبل الإقدام على الشراء" data-en="Evaluate product quality through real samples that give you confidence before making a purchase">
+                            قيّم جودة المنتجات عبر عينات حقيقية تمنحك الثقة قبل الإقدام على الشراء
+                        </p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <h3 data-ar="مطابقة الجودة" data-en="Quality Matching">مطابقة الجودة</h3>
+                        <p data-ar="نضمن توافق المنتجات مع معاييرك المحددة، لتحقيق رضاك التام" data-en="We ensure products match your specified standards to achieve your complete satisfaction">
+                            نضمن توافق المنتجات مع معاييرك المحددة، لتحقيق رضاك التام
+                        </p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <h3 data-ar="تصميم المنتج" data-en="Product Design">تصميم المنتج</h3>
+                        <p data-ar="شاركنا رؤيتك ليحول فريقنا أفكارك إلى تصميم احترافي يليق بعلامتك التجارية" data-en="Share your vision with us so our team can turn your ideas into a professional design">
+                            شاركنا رؤيتك ليحول فريقنا أفكارك إلى تصميم احترافي يليق بعلامتك التجارية
+                        </p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <h3 data-ar="تعميد الطلبية" data-en="Order Confirmation">تعميد الطلبية</h3>
+                        <p data-ar="وثّق طلبك رسميًا لبدء العملية بكل وضوح وشفافية" data-en="Officially document your order to start the process with complete clarity and transparency">
+                            وثّق طلبك رسميًا لبدء العملية بكل وضوح وشفافية
+                        </p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <h3 data-ar="دفع العربون" data-en="Down Payment">دفع العربون</h3>
+                        <p data-ar="ادفع العربون للانطلاق في تنفيذ طلبك بكل ثقة واستقرار" data-en="Pay the down payment to start executing your order with complete confidence and stability">
+                            ادفع العربون للانطلاق في تنفيذ طلبك بكل ثقة واستقرار
+                        </p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <i class="fas fa-industry"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <h3 data-ar="بداية التصنيع" data-en="Manufacturing Start">بداية التصنيع</h3>
+                        <p data-ar="نبدأ عملية التصنيع بأعلى معايير الدقة والجودة لتحقيق نتائج مثالية" data-en="We begin the manufacturing process with the highest standards of precision and quality">
+                            نبدأ عملية التصنيع بأعلى معايير الدقة والجودة لتحقيق نتائج مثالية
+                        </p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <h3 data-ar="تنسيق الاستلام" data-en="Delivery Coordination">تنسيق الاستلام</h3>
+                        <p data-ar="سنرتب عملية الاستلام بمرونة وسلاسة تتماشى مع جدولك" data-en="We will arrange the delivery process with flexibility and smoothness that aligns with your schedule">
+                            سنرتب عملية الاستلام بمرونة وسلاسة تتماشى مع جدولك
+                        </p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <h3 data-ar="إنهاء الطلبية" data-en="Order Completion">إنهاء الطلبية</h3>
+                        <p data-ar="استلم منتجاتك النهائية جاهزة للاستخدام مع ضمان المتابعة والدعم عند الحاجة" data-en="Receive your final products ready for use with guaranteed follow-up and support when needed">
+                            استلم منتجاتك النهائية جاهزة للاستخدام مع ضمان المتابعة والدعم عند الحاجة
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="process-note">
+                <p data-ar="في موردك نحن ليس فقط نستورد ونصدر لك المنتجات بل نساعدك على نمو مشروعك وتحقيق أهدافك" data-en="At Moredak, we not only import and export products for you, but we also help you grow your business and achieve your goals">
+                    في موردك نحن ليس فقط نستورد ونصدر لك المنتجات بل نساعدك على نمو مشروعك وتحقيق أهدافك
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-ar="تواصل معنا" data-en="Contact Us">تواصل معنا</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h4 data-ar="الهاتف" data-en="Phone">الهاتف</h4>
+                            <p>+966 123 456 789</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4 data-ar="البريد الإلكتروني" data-en="Email">البريد الإلكتروني</h4>
+                            <p>info@moredak.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4 data-ar="العنوان" data-en="Address">العنوان</h4>
+                            <p data-ar="الرياض، المملكة العربية السعودية" data-en="Riyadh, Saudi Arabia">الرياض، المملكة العربية السعودية</p>
+                        </div>
+                    </div>
+                    <div class="contact-map">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3624.1!2d46.6753!3d24.7136!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjTCsDQyJzQ5LjAiTiA0NsKwNDAnMzEuMSJF!5e0!3m2!1sen!2ssa!4v1234567890" width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <form id="contact-form">
+                        <div class="form-group">
+                            <input type="text" id="name" required>
+                            <label data-ar="الاسم" data-en="Name">الاسم</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="contact-email" required>
+                            <label data-ar="البريد الإلكتروني" data-en="Email">البريد الإلكتروني</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="tel" id="phone" required>
+                            <label data-ar="رقم الهاتف" data-en="Phone">رقم الهاتف</label>
+                        </div>
+                        <div class="form-group">
+                            <textarea id="message" required></textarea>
+                            <label data-ar="الرسالة" data-en="Message">الرسالة</label>
+                        </div>
+                        <button type="submit" class="submit-btn">
+                            <span data-ar="إرسال الرسالة" data-en="Send Message">إرسال الرسالة</span>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <div class="logo-icon">
+                            <i class="fas fa-shipping-fast"></i>
+                            <div class="logo-circle"></div>
+                        </div>
+                        <div>
+                            <h3 data-ar="موردك" data-en="Moredak">موردك</h3>
+                            <span data-ar="بوابتك للاستيراد" data-en="Your Import Gateway">بوابتك للاستيراد</span>
+                        </div>
+                    </div>
+                    <p data-ar="في موردك نحن ليس فقط نستورد ونصدر لك المنتجات بل نساعدك على نمو مشروعك وتحقيق أهدافك" data-en="At Moredak, we help you grow your business and achieve your goals">
+                        في موردك نحن ليس فقط نستورد ونصدر لك المنتجات بل نساعدك على نمو مشروعك وتحقيق أهدافك
+                    </p>
+                </div>
+                <div class="footer-section">
+                    <h4 data-ar="روابط سريعة" data-en="Quick Links">روابط سريعة</h4>
+                    <ul>
+                        <li><a href="#home" data-ar="الرئيسية" data-en="Home">الرئيسية</a></li>
+                        <li><a href="#about" data-ar="من نحن" data-en="About">من نحن</a></li>
+                        <li><a href="#services" data-ar="خدماتنا" data-en="Services">خدماتنا</a></li>
+                        <li><a href="#process" data-ar="آلية العمل" data-en="Process">آلية العمل</a></li>
+                        <li><a href="#contact" data-ar="تواصل معنا" data-en="Contact">تواصل معنا</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 data-ar="خدماتنا" data-en="Our Services">خدماتنا</h4>
+                    <ul>
+                        <li><a href="#services" data-ar="الاستيراد" data-en="Import">الاستيراد</a></li>
+                        <li><a href="#services" data-ar="الفحص" data-en="Inspection">الفحص</a></li>
+                        <li><a href="#services" data-ar="التمثيل" data-en="Representation">التمثيل</a></li>
+                        <li><a href="#services" data-ar="الشحن" data-en="Shipping">الشحن</a></li>
+                        <li><a href="#services" data-ar="الاستشارة" data-en="Consultation">الاستشارة</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 data-ar="تابعنا" data-en="Follow Us">تابعنا</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p data-ar="© 2024 جميع الحقوق محفوظة لمنصة موردك" data-en="© 2024 All rights reserved to Moredak Platform">© 2024 جميع الحقوق محفوظة لمنصة موردك</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating Contact Button -->
+    <div class="floating-contact" id="floating-contact">
+        <div class="floating-btn">
+            <i class="fas fa-comments"></i>
+        </div>
+        <div class="floating-menu" id="floating-menu">
+            <a href="https://wa.me/966123456789" class="floating-item whatsapp" target="_blank">
+                <i class="fab fa-whatsapp"></i>
+                <span data-ar="واتساب" data-en="WhatsApp">واتساب</span>
+            </a>
+            <a href="mailto:info@moredak.com" class="floating-item email">
+                <i class="fas fa-envelope"></i>
+                <span data-ar="إيميل" data-en="Email">إيميل</span>
+            </a>
+            <a href="tel:+966123456789" class="floating-item phone">
+                <i class="fas fa-phone"></i>
+                <span data-ar="اتصال" data-en="Call">اتصال</span>
+            </a>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

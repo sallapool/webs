@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم الإدمن - منصة موردك</title>
+    <link rel="stylesheet" href="admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="admin-header">
+        <div class="header-container">
+            <div class="header-left">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-shipping-fast"></i>
+                        <div class="logo-circle"></div>
+                    </div>
+                    <div class="logo-text">
+                        <h1>موردك</h1>
+                        <span>لوحة التحكم</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="admin-info">
+                    <div class="admin-avatar">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <div class="admin-details">
+                        <span class="admin-name">المدير العام</span>
+                        <span class="admin-role">Super Admin</span>
+                    </div>
+                </div>
+                <button class="logout-btn" id="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>تسجيل الخروج</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <div class="container">
+            <!-- Dashboard Stats -->
+            <section class="dashboard-stats">
+                <h2 class="section-title">
+                    <i class="fas fa-chart-bar"></i>
+                    إحصائيات المنصة
+                </h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon users">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="total-users">0</h3>
+                            <p>إجمالي المستخدمين</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon consultations">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="total-consultations">0</h3>
+                            <p>طلبات الاستشارة</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon logins">
+                            <i class="fas fa-sign-in-alt"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="total-logins">0</h3>
+                            <p>عمليات تسجيل الدخول</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon active">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="active-users">0</h3>
+                            <p>المستخدمين النشطين</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Users Management -->
+            <section class="users-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-users-cog"></i>
+                        إدارة المستخدمين
+                    </h2>
+                    <div class="section-actions">
+                        <button class="refresh-btn" id="refresh-users">
+                            <i class="fas fa-sync-alt"></i>
+                            تحديث
+                        </button>
+                        <button class="export-btn" id="export-users">
+                            <i class="fas fa-download"></i>
+                            تصدير
+                        </button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="data-table" id="users-table">
+                        <thead>
+                            <tr>
+                                <th>الاسم</th>
+                                <th>البريد الإلكتروني</th>
+                                <th>رقم الهاتف</th>
+                                <th>تاريخ التسجيل</th>
+                                <th>آخر دخول</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-tbody">
+                            <!-- Users will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Consultations Management -->
+            <section class="consultations-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-clipboard-list"></i>
+                        طلبات الاستشارة
+                    </h2>
+                    <div class="section-actions">
+                        <button class="refresh-btn" id="refresh-consultations">
+                            <i class="fas fa-sync-alt"></i>
+                            تحديث
+                        </button>
+                        <button class="export-btn" id="export-consultations">
+                            <i class="fas fa-download"></i>
+                            تصدير
+                        </button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="data-table" id="consultations-table">
+                        <thead>
+                            <tr>
+                                <th>الاسم</th>
+                                <th>البريد الإلكتروني</th>
+                                <th>رقم الهاتف</th>
+                                <th>نوع الخدمة</th>
+                                <th>تاريخ الطلب</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="consultations-tbody">
+                            <!-- Consultations will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Activity Log -->
+            <section class="activity-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-history"></i>
+                        سجل النشاطات
+                    </h2>
+                    <div class="section-actions">
+                        <button class="clear-btn" id="clear-activity">
+                            <i class="fas fa-trash"></i>
+                            مسح السجل
+                        </button>
+                    </div>
+                </div>
+                <div class="activity-log" id="activity-log">
+                    <!-- Activity items will be populated here -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Consultation Details Modal -->
+    <div id="consultation-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>تفاصيل طلب الاستشارة</h3>
+                <span class="close-btn">&times;</span>
+            </div>
+            <div class="modal-body" id="consultation-details">
+                <!-- Consultation details will be populated here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="mark-processed">
+                    <i class="fas fa-check"></i>
+                    تم المعالجة
+                </button>
+                <button class="btn btn-secondary" id="close-modal">
+                    <i class="fas fa-times"></i>
+                    إغلاق
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
