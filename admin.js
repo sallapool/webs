@@ -1,611 +1,782 @@
-// Admin Dashboard Manager
-class AdminDashboard {
-    constructor() {
-        this.users = [];
-        this.consultations = [];
-        this.activities = [];
-        this.currentConsultation = null;
-        this.init();
+// Global variables
+let users = JSON.parse(localStorage.getItem('mourdakUsers')) || [];
+let consultations = JSON.parse(localStorage.getItem('mourdakConsultations')) || [];
+let currentSection = 'dashboard';
+
+// DOM Content Loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Check admin authentication
+    if (!localStorage.getItem('mourdakAdmin')) {
+        window.location.href = 'index.html';
+        return;
     }
+    
+    // Initialize admin panel
+    initializeAdmin();
+    setupEventListeners();
+    
+    // Hide loading screen after 2 seconds
+    setTimeout(hideLoadingScreen, 2000);
+});
 
-    init() {
-        this.loadData();
-        this.bindEvents();
-        this.updateStats();
-        this.renderUsers();
-        this.renderConsultations();
-        this.renderActivities();
-        this.startAutoRefresh();
-    }
+// Initialize admin panel
+function initializeAdmin() {
+    loadDashboardData();
+    updateStats();
+    loadRecentData();
+}
 
-    loadData() {
-        // Load users from localStorage
-        this.users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-        
-        // Load consultations from localStorage
-        this.consultations = JSON.parse(localStorage.getItem('consultations') || '[]');
-        
-        // Load activities from localStorage
-        this.activities = JSON.parse(localStorage.getItem('adminActivities') || '[]');
-        
-        // Add some sample data if empty
-        if (this.users.length === 0) {
-            this.addSampleData();
-        }
-    }
-
-    addSampleData() {
-        const sampleUsers = [
-            {
-                name: 'أحمد محمد',
-                email: 'ahmed@example.com',
-                phone: '+966501234567',
-                registrationTime: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-                lastLogin: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
-            },
-            {
-                name: 'فاطمة علي',
-                email: 'fatima@example.com',
-                phone: '+966507654321',
-                registrationTime: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-                lastLogin: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
-            },
-            {
-                name: 'محمد السعيد',
-                email: 'mohammed@example.com',
-                phone: '+966509876543',
-                registrationTime: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-                lastLogin: new Date(Date.now() - 30 * 60 * 1000).toISOString()
-            }
-        ];
-
-        const sampleConsultations = [
-            {
-                name: 'سارة أحمد',
-                email: 'sara@example.com',
-                phone: '+966501111111',
-                service: 'import',
-                message: 'أريد استيراد منتجات إلكترونية من الصين، ما هي الخطوات المطلوبة؟',
-                submissionTime: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-                status: 'pending'
-            },
-            {
-                name: 'خالد محمد',
-                email: 'khalid@example.com',
-                phone: '+966502222222',
-                service: 'inspection',
-                message: 'أحتاج خدمة فحص للمنتجات قبل الشحن',
-                submissionTime: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-                status: 'processed'
-            }
-        ];
-
-        this.users = sampleUsers;
-        this.consultations = sampleConsultations;
-        
-        localStorage.setItem('registeredUsers', JSON.stringify(this.users));
-        localStorage.setItem('consultations', JSON.stringify(this.consultations));
-        
-        // Add sample activities
-        this.addActivity('register', 'تم تسجيل مستخدم جديد: أحمد محمد');
-        this.addActivity('consultation', 'طلب استشارة جديد من: سارة أحمد');
-        this.addActivity('login', 'تسجيل دخول: فاطمة علي');
-    }
-
-    bindEvents() {
-        // Logout button
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            this.logout();
-        });
-
-        // Refresh buttons
-        document.getElementById('refresh-users').addEventListener('click', () => {
-            this.refreshUsers();
-        });
-
-        document.getElementById('refresh-consultations').addEventListener('click', () => {
-            this.refreshConsultations();
-        });
-
-        // Export buttons
-        document.getElementById('export-users').addEventListener('click', () => {
-            this.exportUsers();
-        });
-
-        document.getElementById('export-consultations').addEventListener('click', () => {
-            this.exportConsultations();
-        });
-
-        // Clear activity log
-        document.getElementById('clear-activity').addEventListener('click', () => {
-            this.clearActivityLog();
-        });
-
-        // Modal events
-        document.querySelector('.close-btn').addEventListener('click', () => {
-            this.hideModal();
-        });
-
-        document.getElementById('close-modal').addEventListener('click', () => {
-            this.hideModal();
-        });
-
-        document.getElementById('mark-processed').addEventListener('click', () => {
-            this.markConsultationProcessed();
-        });
-
-        // Close modal on outside click
-        document.getElementById('consultation-modal').addEventListener('click', (e) => {
-            if (e.target.id === 'consultation-modal') {
-                this.hideModal();
-            }
-        });
-    }
-
-    updateStats() {
-        const totalUsers = this.users.length;
-        const totalConsultations = this.consultations.length;
-        const totalLogins = this.users.filter(user => user.lastLogin).length;
-        const activeUsers = this.users.filter(user => {
-            if (!user.lastLogin) return false;
-            const lastLogin = new Date(user.lastLogin);
-            const now = new Date();
-            const diffHours = (now - lastLogin) / (1000 * 60 * 60);
-            return diffHours < 24; // Active in last 24 hours
-        }).length;
-
-        document.getElementById('total-users').textContent = totalUsers;
-        document.getElementById('total-consultations').textContent = totalConsultations;
-        document.getElementById('total-logins').textContent = totalLogins;
-        document.getElementById('active-users').textContent = activeUsers;
-
-        // Animate numbers
-        this.animateNumbers();
-    }
-
-    animateNumbers() {
-        const numbers = document.querySelectorAll('.stat-content h3');
-        numbers.forEach(number => {
-            const target = parseInt(number.textContent);
-            let current = 0;
-            const increment = target / 20;
-            const timer = setInterval(() => {
-                current += increment;
-                if (current >= target) {
-                    current = target;
-                    clearInterval(timer);
-                }
-                number.textContent = Math.floor(current);
-            }, 50);
-        });
-    }
-
-    renderUsers() {
-        const tbody = document.getElementById('users-tbody');
-        tbody.innerHTML = '';
-
-        if (this.users.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="7" class="empty-state">
-                        <i class="fas fa-users"></i>
-                        <h3>لا توجد مستخدمين</h3>
-                        <p>لم يتم تسجيل أي مستخدمين بعد</p>
-                    </td>
-                </tr>
-            `;
-            return;
-        }
-
-        this.users.forEach((user, index) => {
-            const registrationDate = new Date(user.registrationTime).toLocaleDateString('ar-SA');
-            const lastLoginDate = user.lastLogin ? new Date(user.lastLogin).toLocaleDateString('ar-SA') : 'لم يسجل دخول';
-            const isActive = user.lastLogin && (new Date() - new Date(user.lastLogin)) < (24 * 60 * 60 * 1000);
-
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${user.name || 'غير محدد'}</td>
-                <td>${user.email}</td>
-                <td>${user.phone || 'غير محدد'}</td>
-                <td>${registrationDate}</td>
-                <td>${lastLoginDate}</td>
-                <td>
-                    <span class="status-badge ${isActive ? 'active' : 'inactive'}">
-                        <i class="fas ${isActive ? 'fa-circle' : 'fa-circle'}"></i>
-                        ${isActive ? 'نشط' : 'غير نشط'}
-                    </span>
-                </td>
-                <td>
-                    <button class="action-btn edit" onclick="adminDashboard.editUser(${index})">
-                        <i class="fas fa-edit"></i>
-                        تعديل
-                    </button>
-                    <button class="action-btn delete" onclick="adminDashboard.deleteUser(${index})">
-                        <i class="fas fa-trash"></i>
-                        حذف
-                    </button>
-                </td>
-            `;
-            tbody.appendChild(row);
-        });
-    }
-
-    renderConsultations() {
-        const tbody = document.getElementById('consultations-tbody');
-        tbody.innerHTML = '';
-
-        if (this.consultations.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="7" class="empty-state">
-                        <i class="fas fa-comments"></i>
-                        <h3>لا توجد طلبات استشارة</h3>
-                        <p>لم يتم تقديم أي طلبات استشارة بعد</p>
-                    </td>
-                </tr>
-            `;
-            return;
-        }
-
-        this.consultations.forEach((consultation, index) => {
-            const submissionDate = new Date(consultation.submissionTime).toLocaleDateString('ar-SA');
-            const serviceNames = {
-                'import': 'الاستيراد',
-                'inspection': 'الفحص',
-                'representation': 'التمثيل',
-                'compliance': 'الامتثال',
-                'documentation': 'التوثيق',
-                'shipping': 'الشحن',
-                'pricing': 'خطة تسعيرية',
-                'marketing': 'خطة تسويقية',
-                'feasibility': 'دراسة جدوى'
-            };
-
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${consultation.name}</td>
-                <td>${consultation.email}</td>
-                <td>${consultation.phone}</td>
-                <td>${serviceNames[consultation.service] || consultation.service}</td>
-                <td>${submissionDate}</td>
-                <td>
-                    <span class="status-badge ${consultation.status || 'pending'}">
-                        <i class="fas ${consultation.status === 'processed' ? 'fa-check-circle' : 'fa-clock'}"></i>
-                        ${consultation.status === 'processed' ? 'تم المعالجة' : 'في الانتظار'}
-                    </span>
-                </td>
-                <td>
-                    <button class="action-btn view" onclick="adminDashboard.viewConsultation(${index})">
-                        <i class="fas fa-eye"></i>
-                        عرض
-                    </button>
-                    <button class="action-btn delete" onclick="adminDashboard.deleteConsultation(${index})">
-                        <i class="fas fa-trash"></i>
-                        حذف
-                    </button>
-                </td>
-            `;
-            tbody.appendChild(row);
-        });
-    }
-
-    renderActivities() {
-        const activityLog = document.getElementById('activity-log');
-        activityLog.innerHTML = '';
-
-        if (this.activities.length === 0) {
-            activityLog.innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-history"></i>
-                    <h3>لا توجد نشاطات</h3>
-                    <p>لم يتم تسجيل أي نشاطات بعد</p>
-                </div>
-            `;
-            return;
-        }
-
-        this.activities.slice(-10).reverse().forEach(activity => {
-            const activityTime = new Date(activity.timestamp).toLocaleString('ar-SA');
-            const activityItem = document.createElement('div');
-            activityItem.className = 'activity-item';
-            activityItem.innerHTML = `
-                <div class="activity-icon ${activity.type}">
-                    <i class="fas ${this.getActivityIcon(activity.type)}"></i>
-                </div>
-                <div class="activity-content">
-                    <h4>${activity.message}</h4>
-                    <p>${activity.details || ''}</p>
-                </div>
-                <div class="activity-time">${activityTime}</div>
-            `;
-            activityLog.appendChild(activityItem);
-        });
-    }
-
-    getActivityIcon(type) {
-        const icons = {
-            'login': 'fa-sign-in-alt',
-            'register': 'fa-user-plus',
-            'consultation': 'fa-comments',
-            'admin': 'fa-cog'
-        };
-        return icons[type] || 'fa-info-circle';
-    }
-
-    viewConsultation(index) {
-        this.currentConsultation = index;
-        const consultation = this.consultations[index];
-        
-        const serviceNames = {
-            'import': 'الاستيراد',
-            'inspection': 'الفحص',
-            'representation': 'التمثيل',
-            'compliance': 'الامتثال',
-            'documentation': 'التوثيق',
-            'shipping': 'الشحن',
-            'pricing': 'خطة تسعيرية',
-            'marketing': 'خطة تسويقية',
-            'feasibility': 'دراسة جدوى'
-        };
-
-        const detailsContainer = document.getElementById('consultation-details');
-        detailsContainer.innerHTML = `
-            <div class="detail-item">
-                <div class="detail-label">الاسم:</div>
-                <div class="detail-value">${consultation.name}</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-label">البريد الإلكتروني:</div>
-                <div class="detail-value">${consultation.email}</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-label">رقم الهاتف:</div>
-                <div class="detail-value">${consultation.phone}</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-label">نوع الخدمة:</div>
-                <div class="detail-value">${serviceNames[consultation.service] || consultation.service}</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-label">تاريخ الطلب:</div>
-                <div class="detail-value">${new Date(consultation.submissionTime).toLocaleString('ar-SA')}</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-label">الحالة:</div>
-                <div class="detail-value">
-                    <span class="status-badge ${consultation.status || 'pending'}">
-                        ${consultation.status === 'processed' ? 'تم المعالجة' : 'في الانتظار'}
-                    </span>
-                </div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-label">تفاصيل الاستشارة:</div>
-                <div class="detail-value">${consultation.message}</div>
-            </div>
-        `;
-
-        this.showModal();
-    }
-
-    markConsultationProcessed() {
-        if (this.currentConsultation !== null) {
-            this.consultations[this.currentConsultation].status = 'processed';
-            localStorage.setItem('consultations', JSON.stringify(this.consultations));
-            this.renderConsultations();
-            this.addActivity('admin', `تم معالجة طلب استشارة: ${this.consultations[this.currentConsultation].name}`);
-            this.hideModal();
-            this.showNotification('تم تحديث حالة الطلب إلى "تم المعالجة"', 'success');
-        }
-    }
-
-    editUser(index) {
-        const user = this.users[index];
-        const newName = prompt('تعديل الاسم:', user.name || '');
-        const newPhone = prompt('تعديل رقم الهاتف:', user.phone || '');
-        
-        if (newName !== null) {
-            this.users[index].name = newName;
-        }
-        if (newPhone !== null) {
-            this.users[index].phone = newPhone;
-        }
-        
-        localStorage.setItem('registeredUsers', JSON.stringify(this.users));
-        this.renderUsers();
-        this.addActivity('admin', `تم تعديل بيانات المستخدم: ${user.email}`);
-        this.showNotification('تم تحديث بيانات المستخدم بنجاح', 'success');
-    }
-
-    deleteUser(index) {
-        const user = this.users[index];
-        if (confirm(`هل أنت متأكد من حذف المستخدم: ${user.email}؟`)) {
-            this.users.splice(index, 1);
-            localStorage.setItem('registeredUsers', JSON.stringify(this.users));
-            this.renderUsers();
-            this.updateStats();
-            this.addActivity('admin', `تم حذف المستخدم: ${user.email}`);
-            this.showNotification('تم حذف المستخدم بنجاح', 'success');
-        }
-    }
-
-    deleteConsultation(index) {
-        const consultation = this.consultations[index];
-        if (confirm(`هل أنت متأكد من حذف طلب الاستشارة من: ${consultation.name}؟`)) {
-            this.consultations.splice(index, 1);
-            localStorage.setItem('consultations', JSON.stringify(this.consultations));
-            this.renderConsultations();
-            this.updateStats();
-            this.addActivity('admin', `تم حذف طلب استشارة: ${consultation.name}`);
-            this.showNotification('تم حذف طلب الاستشارة بنجاح', 'success');
-        }
-    }
-
-    refreshUsers() {
-        this.loadData();
-        this.renderUsers();
-        this.updateStats();
-        this.showNotification('تم تحديث قائمة المستخدمين', 'success');
-    }
-
-    refreshConsultations() {
-        this.loadData();
-        this.renderConsultations();
-        this.updateStats();
-        this.showNotification('تم تحديث قائمة طلبات الاستشارة', 'success');
-    }
-
-    exportUsers() {
-        const csvContent = this.generateCSV(this.users, [
-            { key: 'name', label: 'الاسم' },
-            { key: 'email', label: 'البريد الإلكتروني' },
-            { key: 'phone', label: 'رقم الهاتف' },
-            { key: 'registrationTime', label: 'تاريخ التسجيل' },
-            { key: 'lastLogin', label: 'آخر دخول' }
-        ]);
-        this.downloadCSV(csvContent, 'users.csv');
-        this.showNotification('تم تصدير قائمة المستخدمين', 'success');
-    }
-
-    exportConsultations() {
-        const csvContent = this.generateCSV(this.consultations, [
-            { key: 'name', label: 'الاسم' },
-            { key: 'email', label: 'البريد الإلكتروني' },
-            { key: 'phone', label: 'رقم الهاتف' },
-            { key: 'service', label: 'نوع الخدمة' },
-            { key: 'submissionTime', label: 'تاريخ الطلب' },
-            { key: 'status', label: 'الحالة' },
-            { key: 'message', label: 'الرسالة' }
-        ]);
-        this.downloadCSV(csvContent, 'consultations.csv');
-        this.showNotification('تم تصدير قائمة طلبات الاستشارة', 'success');
-    }
-
-    generateCSV(data, columns) {
-        const headers = columns.map(col => col.label).join(',');
-        const rows = data.map(item => 
-            columns.map(col => {
-                let value = item[col.key] || '';
-                if (typeof value === 'string' && value.includes(',')) {
-                    value = `"${value}"`;
-                }
-                return value;
-            }).join(',')
-        );
-        return [headers, ...rows].join('\n');
-    }
-
-    downloadCSV(content, filename) {
-        const blob = new Blob(['\ufeff' + content], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        link.setAttribute('download', filename);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
-    clearActivityLog() {
-        if (confirm('هل أنت متأكد من مسح سجل النشاطات؟')) {
-            this.activities = [];
-            localStorage.setItem('adminActivities', JSON.stringify(this.activities));
-            this.renderActivities();
-            this.showNotification('تم مسح سجل النشاطات', 'success');
-        }
-    }
-
-    addActivity(type, message, details = '') {
-        const activity = {
-            type: type,
-            message: message,
-            details: details,
-            timestamp: new Date().toISOString()
-        };
-        this.activities.push(activity);
-        localStorage.setItem('adminActivities', JSON.stringify(this.activities));
-        this.renderActivities();
-    }
-
-    showModal() {
-        document.getElementById('consultation-modal').classList.add('show');
-        document.body.style.overflow = 'hidden';
-    }
-
-    hideModal() {
-        document.getElementById('consultation-modal').classList.remove('show');
-        document.body.style.overflow = '';
-        this.currentConsultation = null;
-    }
-
-    logout() {
-        if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
-            window.location.href = 'index.html';
-        }
-    }
-
-    startAutoRefresh() {
-        // Auto refresh every 30 seconds
-        setInterval(() => {
-            this.loadData();
-            this.updateStats();
-        }, 30000);
-    }
-
-    showNotification(message, type = 'info') {
-        const notification = document.createElement('div');
-        notification.className = `notification ${type}`;
-        notification.innerHTML = `
-            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-info-circle'}"></i>
-            <span>${message}</span>
-        `;
-        
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: ${type === 'success' ? '#10b981' : '#3b82f6'};
-            color: white;
-            padding: 15px 20px;
-            border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            animation: slideInRight 0.3s ease;
-            max-width: 400px;
-        `;
-
-        document.body.appendChild(notification);
-
+// Hide loading screen
+function hideLoadingScreen() {
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen) {
+        loadingScreen.style.opacity = '0';
         setTimeout(() => {
-            notification.style.animation = 'slideOutRight 0.3s ease';
-            setTimeout(() => {
-                if (document.body.contains(notification)) {
-                    document.body.removeChild(notification);
-                }
-            }, 300);
-        }, 3000);
+            loadingScreen.style.display = 'none';
+        }, 500);
     }
 }
 
-// Initialize admin dashboard when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    window.adminDashboard = new AdminDashboard();
+// Setup event listeners
+function setupEventListeners() {
+    // Sidebar toggle
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
     
-    // Add custom styles for notifications
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+    sidebarToggle?.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+    });
+    
+    // Mobile menu toggle
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    
+    mobileMenuBtn?.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+    });
+    
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 768) {
+            if (!sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                sidebar.classList.remove('active');
+            }
+        }
+    });
+    
+    // Search functionality
+    const userSearch = document.getElementById('userSearch');
+    const consultationSearch = document.getElementById('consultationSearch');
+    const consultationFilter = document.getElementById('consultationFilter');
+    
+    userSearch?.addEventListener('input', filterUsers);
+    consultationSearch?.addEventListener('input', filterConsultations);
+    consultationFilter?.addEventListener('change', filterConsultations);
+    
+    // Modal close events
+    window.addEventListener('click', (e) => {
+        if (e.target.classList.contains('modal')) {
+            e.target.style.display = 'none';
+        }
+    });
+}
+
+// Show section
+function showSection(sectionId) {
+    // Hide all sections
+    document.querySelectorAll('.content-section').forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    // Remove active class from all nav items
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    // Show selected section
+    const section = document.getElementById(sectionId);
+    if (section) {
+        section.classList.add('active');
+        currentSection = sectionId;
+        
+        // Add active class to corresponding nav item
+        const navLink = document.querySelector(`[onclick="showSection('${sectionId}')"]`);
+        if (navLink) {
+            navLink.closest('.nav-item').classList.add('active');
         }
         
-        @keyframes slideOutRight {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
+        // Update page title
+        updatePageTitle(sectionId);
+        
+        // Load section-specific data
+        loadSectionData(sectionId);
+    }
+}
+
+// Update page title
+function updatePageTitle(sectionId) {
+    const titles = {
+        dashboard: 'لوحة التحكم',
+        users: 'إدارة المستخدمين',
+        consultations: 'إدارة الاستشارات',
+        analytics: 'التحليلات والإحصائيات',
+        settings: 'إعدادات النظام'
+    };
+    
+    const pageTitle = document.getElementById('pageTitle');
+    if (pageTitle && titles[sectionId]) {
+        pageTitle.textContent = titles[sectionId];
+    }
+}
+
+// Load section-specific data
+function loadSectionData(sectionId) {
+    switch (sectionId) {
+        case 'dashboard':
+            loadDashboardData();
+            break;
+        case 'users':
+            loadUsersData();
+            break;
+        case 'consultations':
+            loadConsultationsData();
+            break;
+        case 'analytics':
+            loadAnalyticsData();
+            break;
+        case 'settings':
+            loadSettingsData();
+            break;
+    }
+}
+
+// Update statistics
+function updateStats() {
+    const totalUsers = users.length;
+    const totalConsultations = consultations.length;
+    const pendingConsultations = consultations.filter(c => c.status === 'pending').length;
+    const completedConsultations = consultations.filter(c => c.status === 'completed').length;
+    
+    // Update stat cards
+    const totalUsersEl = document.getElementById('totalUsers');
+    const totalConsultationsEl = document.getElementById('totalConsultations');
+    const pendingConsultationsEl = document.getElementById('pendingConsultations');
+    const completedConsultationsEl = document.getElementById('completedConsultations');
+    
+    if (totalUsersEl) totalUsersEl.textContent = totalUsers;
+    if (totalConsultationsEl) totalConsultationsEl.textContent = totalConsultations;
+    if (pendingConsultationsEl) pendingConsultationsEl.textContent = pendingConsultations;
+    if (completedConsultationsEl) completedConsultationsEl.textContent = completedConsultations;
+}
+
+// Load dashboard data
+function loadDashboardData() {
+    updateStats();
+    loadRecentData();
+    loadConsultationsChart();
+}
+
+// Load recent data
+function loadRecentData() {
+    loadRecentUsers();
+    loadRecentConsultations();
+}
+
+// Load recent users
+function loadRecentUsers() {
+    const recentUsersContainer = document.getElementById('recentUsers');
+    if (!recentUsersContainer) return;
+    
+    const recentUsers = users.slice(-5).reverse();
+    
+    if (recentUsers.length === 0) {
+        recentUsersContainer.innerHTML = '<p style="text-align: center; color: var(--text-light); padding: 2rem;">لا توجد مستخدمين حتى الآن</p>';
+        return;
+    }
+    
+    recentUsersContainer.innerHTML = recentUsers.map(user => `
+        <div class="recent-item">
+            <div class="recent-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="recent-info">
+                <div class="recent-name">${user.name}</div>
+                <div class="recent-details">${user.email}</div>
+            </div>
+            <div class="recent-time">${formatDate(user.createdAt)}</div>
+        </div>
+    `).join('');
+}
+
+// Load recent consultations
+function loadRecentConsultations() {
+    const recentConsultationsContainer = document.getElementById('recentConsultations');
+    if (!recentConsultationsContainer) return;
+    
+    const recentConsultations = consultations.slice(-5).reverse();
+    
+    if (recentConsultations.length === 0) {
+        recentConsultationsContainer.innerHTML = '<p style="text-align: center; color: var(--text-light); padding: 2rem;">لا توجد استشارات حتى الآن</p>';
+        return;
+    }
+    
+    recentConsultationsContainer.innerHTML = recentConsultations.map(consultation => `
+        <div class="recent-item">
+            <div class="recent-avatar">
+                <i class="fas fa-comment"></i>
+            </div>
+            <div class="recent-info">
+                <div class="recent-name">${consultation.name}</div>
+                <div class="recent-details">${getServiceName(consultation.service)}</div>
+            </div>
+            <div class="recent-time">${formatDate(consultation.createdAt)}</div>
+        </div>
+    `).join('');
+}
+
+// Load consultations chart
+function loadConsultationsChart() {
+    const canvas = document.getElementById('consultationsChart');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    
+    // Simple chart implementation
+    const pending = consultations.filter(c => c.status === 'pending').length;
+    const completed = consultations.filter(c => c.status === 'completed').length;
+    const cancelled = consultations.filter(c => c.status === 'cancelled').length;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Set canvas size
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    
+    // Draw simple bar chart
+    const barWidth = canvas.width / 4;
+    const maxHeight = canvas.height - 40;
+    const maxValue = Math.max(pending, completed, cancelled, 1);
+    
+    // Draw bars
+    const bars = [
+        { value: pending, color: '#f59e0b', label: 'معلقة' },
+        { value: completed, color: '#10b981', label: 'مكتملة' },
+        { value: cancelled, color: '#ef4444', label: 'ملغية' }
+    ];
+    
+    bars.forEach((bar, index) => {
+        const height = (bar.value / maxValue) * maxHeight;
+        const x = (index + 0.5) * barWidth;
+        const y = canvas.height - height - 20;
+        
+        // Draw bar
+        ctx.fillStyle = bar.color;
+        ctx.fillRect(x - barWidth/4, y, barWidth/2, height);
+        
+        // Draw value
+        ctx.fillStyle = '#1f2937';
+        ctx.font = '14px Cairo';
+        ctx.textAlign = 'center';
+        ctx.fillText(bar.value.toString(), x, y - 5);
+        
+        // Draw label
+        ctx.fillText(bar.label, x, canvas.height - 5);
+    });
+}
+
+// Load users data
+function loadUsersData() {
+    const usersTableBody = document.getElementById('usersTableBody');
+    if (!usersTableBody) return;
+    
+    if (users.length === 0) {
+        usersTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-light);">لا توجد مستخدمين مسجلين</td></tr>';
+        return;
+    }
+    
+    usersTableBody.innerHTML = users.map(user => `
+        <tr>
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td>${user.phone}</td>
+            <td>${formatDate(user.createdAt)}</td>
+            <td>
+                <div class="action-buttons">
+                    <button class="btn-sm btn-primary" onclick="viewUser(${user.id})">
+                        <i class="fas fa-eye"></i>
+                        عرض
+                    </button>
+                    <button class="btn-sm btn-danger" onclick="deleteUser(${user.id})">
+                        <i class="fas fa-trash"></i>
+                        حذف
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// Load consultations data
+function loadConsultationsData() {
+    const consultationsTableBody = document.getElementById('consultationsTableBody');
+    if (!consultationsTableBody) return;
+    
+    let filteredConsultations = [...consultations];
+    
+    // Apply filters
+    const filter = document.getElementById('consultationFilter')?.value;
+    if (filter && filter !== 'all') {
+        filteredConsultations = filteredConsultations.filter(c => c.status === filter);
+    }
+    
+    const search = document.getElementById('consultationSearch')?.value.toLowerCase();
+    if (search) {
+        filteredConsultations = filteredConsultations.filter(c => 
+            c.name.toLowerCase().includes(search) ||
+            c.email.toLowerCase().includes(search) ||
+            getServiceName(c.service).toLowerCase().includes(search)
+        );
+    }
+    
+    if (filteredConsultations.length === 0) {
+        consultationsTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-light);">لا توجد استشارات</td></tr>';
+        return;
+    }
+    
+    consultationsTableBody.innerHTML = filteredConsultations.map(consultation => `
+        <tr>
+            <td>${consultation.name}</td>
+            <td>${consultation.email}</td>
+            <td>${getServiceName(consultation.service)}</td>
+            <td>${formatDate(consultation.createdAt)}</td>
+            <td>
+                <span class="status-badge status-${consultation.status || 'pending'}">
+                    ${getStatusName(consultation.status || 'pending')}
+                </span>
+            </td>
+            <td>
+                <div class="action-buttons">
+                    <button class="btn-sm btn-primary" onclick="viewConsultation(${consultation.id})">
+                        <i class="fas fa-eye"></i>
+                        عرض
+                    </button>
+                    <button class="btn-sm btn-success" onclick="updateConsultationStatus(${consultation.id}, 'completed')">
+                        <i class="fas fa-check"></i>
+                        إكمال
+                    </button>
+                    <button class="btn-sm btn-danger" onclick="deleteConsultation(${consultation.id})">
+                        <i class="fas fa-trash"></i>
+                        حذف
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// Load analytics data
+function loadAnalyticsData() {
+    loadUsersGrowthChart();
+    loadServicesChart();
+}
+
+// Load users growth chart
+function loadUsersGrowthChart() {
+    const canvas = document.getElementById('usersGrowthChart');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    
+    // Set canvas size
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Simple line chart showing user growth over last 7 days
+    const last7Days = [];
+    for (let i = 6; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        last7Days.push(date);
+    }
+    
+    const userCounts = last7Days.map(date => {
+        return users.filter(user => {
+            const userDate = new Date(user.createdAt);
+            return userDate.toDateString() === date.toDateString();
+        }).length;
+    });
+    
+    // Draw line chart
+    const padding = 40;
+    const chartWidth = canvas.width - 2 * padding;
+    const chartHeight = canvas.height - 2 * padding;
+    const maxValue = Math.max(...userCounts, 1);
+    
+    ctx.strokeStyle = '#3b82f6';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    
+    userCounts.forEach((count, index) => {
+        const x = padding + (index / (userCounts.length - 1)) * chartWidth;
+        const y = padding + chartHeight - (count / maxValue) * chartHeight;
+        
+        if (index === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            ctx.lineTo(x, y);
         }
-    `;
-    document.head.appendChild(style);
-});
+        
+        // Draw point
+        ctx.fillStyle = '#3b82f6';
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // Draw value
+        ctx.fillStyle = '#1f2937';
+        ctx.font = '12px Cairo';
+        ctx.textAlign = 'center';
+        ctx.fillText(count.toString(), x, y - 10);
+    });
+    
+    ctx.stroke();
+}
+
+// Load services chart
+function loadServicesChart() {
+    const canvas = document.getElementById('servicesChart');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    
+    // Set canvas size
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Count services
+    const serviceCounts = {};
+    consultations.forEach(consultation => {
+        const service = consultation.service || 'other';
+        serviceCounts[service] = (serviceCounts[service] || 0) + 1;
+    });
+    
+    const services = Object.keys(serviceCounts);
+    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
+    
+    // Draw pie chart
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = Math.min(centerX, centerY) - 20;
+    
+    let currentAngle = 0;
+    const total = Object.values(serviceCounts).reduce((sum, count) => sum + count, 0);
+    
+    services.forEach((service, index) => {
+        const count = serviceCounts[service];
+        const sliceAngle = (count / total) * 2 * Math.PI;
+        
+        // Draw slice
+        ctx.fillStyle = colors[index % colors.length];
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
+        ctx.closePath();
+        ctx.fill();
+        
+        // Draw label
+        const labelAngle = currentAngle + sliceAngle / 2;
+        const labelX = centerX + Math.cos(labelAngle) * (radius + 30);
+        const labelY = centerY + Math.sin(labelAngle) * (radius + 30);
+        
+        ctx.fillStyle = '#1f2937';
+        ctx.font = '12px Cairo';
+        ctx.textAlign = 'center';
+        ctx.fillText(getServiceName(service), labelX, labelY);
+        ctx.fillText(`(${count})`, labelX, labelY + 15);
+        
+        currentAngle += sliceAngle;
+    });
+}
+
+// Load settings data
+function loadSettingsData() {
+    // Settings are mostly static for this demo
+    console.log('Settings loaded');
+}
+
+// Filter functions
+function filterUsers() {
+    const search = document.getElementById('userSearch').value.toLowerCase();
+    const rows = document.querySelectorAll('#usersTableBody tr');
+    
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(search) ? '' : 'none';
+    });
+}
+
+function filterConsultations() {
+    loadConsultationsData(); // Reload with filters applied
+}
+
+// View functions
+function viewUser(userId) {
+    const user = users.find(u => u.id === userId);
+    if (!user) return;
+    
+    alert(`معلومات المستخدم:\n\nالاسم: ${user.name}\nالبريد الإلكتروني: ${user.email}\nرقم الهاتف: ${user.phone}\nتاريخ التسجيل: ${formatDate(user.createdAt)}`);
+}
+
+function viewConsultation(consultationId) {
+    const consultation = consultations.find(c => c.id === consultationId);
+    if (!consultation) return;
+    
+    const modal = document.getElementById('consultationModal');
+    const content = document.getElementById('consultationModalContent');
+    
+    if (modal && content) {
+        content.innerHTML = `
+            <div class="consultation-detail">
+                <div class="consultation-header">
+                    <h2>تفاصيل الاستشارة</h2>
+                    <span class="status-badge status-${consultation.status || 'pending'}">
+                        ${getStatusName(consultation.status || 'pending')}
+                    </span>
+                </div>
+                
+                <div class="consultation-info">
+                    <div class="info-item">
+                        <span class="info-label">الاسم</span>
+                        <span class="info-value">${consultation.name}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">البريد الإلكتروني</span>
+                        <span class="info-value">${consultation.email}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">رقم الهاتف</span>
+                        <span class="info-value">${consultation.phone}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">الخدمة المطلوبة</span>
+                        <span class="info-value">${getServiceName(consultation.service)}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">تاريخ الطلب</span>
+                        <span class="info-value">${formatDate(consultation.createdAt)}</span>
+                    </div>
+                </div>
+                
+                <div class="consultation-message">
+                    <h4>تفاصيل الطلب:</h4>
+                    <p>${consultation.message}</p>
+                </div>
+                
+                <div class="consultation-actions">
+                    <button class="btn-primary" onclick="updateConsultationStatus(${consultation.id}, 'completed'); closeModal('consultationModal');">
+                        <i class="fas fa-check"></i>
+                        تم الإكمال
+                    </button>
+                    <button class="btn-secondary" onclick="updateConsultationStatus(${consultation.id}, 'cancelled'); closeModal('consultationModal');">
+                        <i class="fas fa-times"></i>
+                        إلغاء
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        modal.style.display = 'block';
+    }
+}
+
+// Update consultation status
+function updateConsultationStatus(consultationId, status) {
+    const consultationIndex = consultations.findIndex(c => c.id === consultationId);
+    if (consultationIndex !== -1) {
+        consultations[consultationIndex].status = status;
+        localStorage.setItem('mourdakConsultations', JSON.stringify(consultations));
+        
+        // Reload current section data
+        loadSectionData(currentSection);
+        updateStats();
+        
+        showNotification(`تم تحديث حالة الاستشارة إلى: ${getStatusName(status)}`, 'success');
+    }
+}
+
+// Delete functions
+function deleteUser(userId) {
+    if (confirm('هل أنت متأكد من حذف هذا المستخدم؟')) {
+        users = users.filter(u => u.id !== userId);
+        localStorage.setItem('mourdakUsers', JSON.stringify(users));
+        
+        loadUsersData();
+        updateStats();
+        showNotification('تم حذف المستخدم بنجاح', 'success');
+    }
+}
+
+function deleteConsultation(consultationId) {
+    if (confirm('هل أنت متأكد من حذف هذه الاستشارة؟')) {
+        consultations = consultations.filter(c => c.id !== consultationId);
+        localStorage.setItem('mourdakConsultations', JSON.stringify(consultations));
+        
+        loadConsultationsData();
+        updateStats();
+        showNotification('تم حذف الاستشارة بنجاح', 'success');
+    }
+}
+
+// Export data
+function exportData() {
+    const data = {
+        users: users,
+        consultations: consultations,
+        exportDate: new Date().toISOString()
+    };
+    
+    const dataStr = JSON.stringify(data, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(dataBlob);
+    link.download = `mourdak-data-${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+    
+    showNotification('تم تصدير البيانات بنجاح', 'success');
+}
+
+// Clear data
+function clearData() {
+    if (confirm('هل أنت متأكد من مسح جميع البيانات؟ هذا الإجراء لا يمكن التراجع عنه.')) {
+        if (confirm('تأكيد أخير: سيتم مسح جميع المستخدمين والاستشارات!')) {
+            localStorage.removeItem('mourdakUsers');
+            localStorage.removeItem('mourdakConsultations');
+            
+            users = [];
+            consultations = [];
+            
+            // Reload current section
+            loadSectionData(currentSection);
+            updateStats();
+            
+            showNotification('تم مسح جميع البيانات', 'success');
+        }
+    }
+}
+
+// Logout
+function logout() {
+    if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+        localStorage.removeItem('mourdakAdmin');
+        window.location.href = 'index.html';
+    }
+}
+
+// Modal functions
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// Utility functions
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ar-SA', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
+
+function getServiceName(serviceKey) {
+    const serviceNames = {
+        import: 'الاستيراد',
+        inspection: 'الفحص',
+        representation: 'التمثيل',
+        compliance: 'الامتثال',
+        documentation: 'التوثيق',
+        shipping: 'الشحن',
+        pricing: 'خطة تسعيرية',
+        marketing: 'خطة تسويقية',
+        feasibility: 'دراسة جدوى',
+        other: 'أخرى'
+    };
+    
+    return serviceNames[serviceKey] || 'غير محدد';
+}
+
+function getStatusName(status) {
+    const statusNames = {
+        pending: 'معلقة',
+        completed: 'مكتملة',
+        cancelled: 'ملغية'
+    };
+    
+    return statusNames[status] || 'غير محدد';
+}
+
+// Notification system
+function showNotification(message, type = 'info') {
+    // Remove existing notifications
+    document.querySelectorAll('.notification').forEach(n => n.remove());
+    
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.textContent = message;
+    
+    // Add styles if not exist
+    if (!document.getElementById('notificationStyles')) {
+        const style = document.createElement('style');
+        style.id = 'notificationStyles';
+        style.textContent = `
+            .notification {
+                position: fixed;
+                top: 100px;
+                left: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                color: white;
+                font-weight: 500;
+                z-index: 10000;
+                animation: slideInLeft 0.3s ease;
+            }
+            .notification-success { background: var(--success-color); }
+            .notification-error { background: var(--error-color); }
+            .notification-info { background: var(--primary-color); }
+            @keyframes slideInLeft {
+                from { transform: translateX(-100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    document.body.appendChild(notification);
+    
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        notification.style.animation = 'slideInLeft 0.3s ease reverse';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// Export functions for global access
+window.showSection = showSection;
+window.viewUser = viewUser;
+window.viewConsultation = viewConsultation;
+window.updateConsultationStatus = updateConsultationStatus;
+window.deleteUser = deleteUser;
+window.deleteConsultation = deleteConsultation;
+window.exportData = exportData;
+window.clearData = clearData;
+window.logout = logout;
+window.closeModal = closeModal;
